@@ -33,15 +33,15 @@ streamlit run app.py
 
 Use the sidebar to navigate. You can also override the API endpoint in the sidebar.
 
-### Quick mock backend (for local testing)
+### backend (for local testing)
 
-If you don't have a backend yet, run the included mock API:
 
 ```bash
-uvicorn mock_backend:app --host 0.0.0.0 --port 8000 --reload
+uvicorn BACKEND:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 Then run Streamlit in another terminal and keep the API Base URL as `http://localhost:8000`.
+run your BACKEND.py as http://127.0.0.1:8000/,
 
 ## Expected Backend Endpoints
 
