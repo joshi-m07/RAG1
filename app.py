@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Tuple
+import requests
 
 import streamlit as st
 
@@ -54,9 +55,9 @@ def render_sidebar() -> Tuple[str, str]:
 	st.sidebar.title("Reminder Agent")
 	page = st.sidebar.radio(
 		"Navigation",
-		options=["Add Task", "View Tasks", "Today’s Schedule"],
+		options=["Add Task", "View Tasks", "Today’s Schedule", "Reminders"],
 	)
-	default_api = os.getenv("API_BASE_URL", "http://localhost:8000")
+	default_api = os.getenv("API_BASE_URL", "http://localhost:9000")
 	api_base = st.sidebar.text_input("API Base URL", value=default_api, help="FastAPI base, e.g., http://localhost:8000")
 	colA, colB = st.sidebar.columns([1, 1])
 	with colA:
@@ -229,6 +230,34 @@ def page_today_schedule(api_base_url: str) -> None:
 			st.write(task_status_color(t.get("status", "Pending")))
 
 
+def page_reminders(api_base_url: str) -> None:
+    st.header("🔔 Due Reminders")
+
+    try:
+        # Call your FastAPI reminders endpoint
+        resp = requests.get(f"{api_base_url.rstrip('/')}/reminders", timeout=10)
+        resp.raise_for_status()
+        data = resp.json()
+    except Exception as e:
+        st.error(f"Failed to fetch reminders: {e}")
+        return
+
+    due_reminders = data.get("due_reminders", [])
+
+    if not due_reminders:
+        st.info("✅ No reminders due right now.")
+        return
+
+    for r in due_reminders:
+        with st.container(border=True):
+            st.subheader(r.get("task", "Unnamed Reminder"))
+            st.caption(f"Scheduled at: {r.get('time')}")
+            if r.get("triggered"):
+                st.success("Reminder already triggered")
+            else:
+                st.warning("⏰ Upcoming reminder")
+
+
 def main() -> None:
 	st.set_page_config(page_title="Reminder Agent", page_icon="⏰", layout="centered")
 	page, api_base = render_sidebar()
@@ -240,9 +269,10 @@ def main() -> None:
 		page_add_task(st.session_state["api_base_url"])
 	elif page == "View Tasks":
 		page_view_tasks(st.session_state["api_base_url"])
-	else:
+	elif page == "Today’s Schedule":
 		page_today_schedule(st.session_state["api_base_url"])
-
+	elif page == "Reminders":
+		page_reminders(st.session_state["api_base_url"])
 
 if __name__ == "__main__":
 	main()

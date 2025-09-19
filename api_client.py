@@ -78,3 +78,19 @@ def get_tasks_today(api_base_url: str) -> Tuple[List[Dict[str, Any]], Optional[s
 		return [], str(e)
 
 
+def add_reminder(api_base_url: str, task: str, minutes_from_now: int):
+    url = f"{api_base_url.rstrip('/')}/add_reminder"
+    try:
+        resp = requests.post(url, params={"task": task, "minutes_from_now": minutes_from_now}, timeout=10)
+        return _handle_response(resp)
+    except requests.RequestException as e:
+        return None, str(e)
+
+
+def get_due_reminders(api_base_url: str):
+    url = f"{api_base_url.rstrip('/')}/reminders"
+    try:
+        resp = requests.get(url, timeout=10)
+        return _handle_response(resp)
+    except requests.RequestException as e:
+        return None, str(e)
