@@ -28,7 +28,7 @@ set API_BASE_URL=http://localhost:8000
 Then start Streamlit:
 
 ```bash
-streamlit run app.py
+streamlit run Frontendapp.py
 ```
 
 Use the sidebar to navigate. You can also override the API endpoint in the sidebar.
