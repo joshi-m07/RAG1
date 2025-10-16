@@ -53,7 +53,7 @@ run your BACKEND.py as http://127.0.0.1:8000/,
 
 
 
-Team Numbers:
+Team Members:
 
 1.K.Deepa Shree(22N213)
 
